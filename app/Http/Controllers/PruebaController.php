@@ -70,7 +70,7 @@ class PruebaController extends Controller
       }
       else
       {
-       $data = DB::table('pruebas')->orderBy('fechaIndicador', 'desc')->get();
+       $data = DB::select('CALL busqueda_arreglada()');
       }
       echo json_encode($data);
      }

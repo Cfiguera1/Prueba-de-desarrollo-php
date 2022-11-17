@@ -148,64 +148,45 @@
             <br>
            <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab" tabindex="0">
               
-             {{--   <div class="col-md-5">Sample Data - Total Records - <b><span id="total_records"></span></b></div>
-              <div class="col-md-5">
-               <div class="input-group input-daterange">De Fecha
-                   <input type="text" name="from_date" id="from_date" readonly class="form-control" />
-                   <div class="input-group-addon">Hasta</div>
-                   <input type="text"  name="to_date" id="to_date" readonly class="form-control" />
-               </div>
-              </div>
-              <div class="col-md-2">
-                <br>
-               <button type="button" name="filter" id="filter" class="btn btn-info btn-sm">Buscar</button>
-               <button type="button" name="refresh" id="refresh" class="btn btn-warning btn-sm">Refrescar</button> <br>
-              </div> --}}
+           
              
             
             <br><br>
-            <div class="col-md-5">Total- <b><span id="total_records"></span></b></div>
+            <!-- EL BUSCADOR QUE QUIERO APLICAR <div class="col-md-5">Total- <b><span id="total_records"></span></b></div>
               <div class="col-md-5">
+
                <div class="input-group input-daterange">De Fecha
                    <input type="text" name="from_date" id="from_date" readonly class="form-control" />
                    <div class="input-group-addon">Hasta</div>
                    <input type="text"  name="to_date" id="to_date" readonly class="form-control" />
                </div>
-              </div>
-              <div class="col-md-2">
-                <br>
-               <button type="button" name="filter" id="filter" class="btn btn-info btn-sm">Buscar</button>
-               <button type="button" name="refresh" id="refresh" class="btn btn-warning btn-sm">Refrescar</button> <br>
+              </div>--> 
+               <H3>BUSCADOR ENTRE FECHAS</H3>
+              <div class="col-md-3">
+              
+              <!-- NO ME GUSTA T_T--> <input type="text" id="daterange_textbox" class="form-control"  />
               </div> 
             <div>
-              <canvas id="bar_chart"></canvas>
+              <div class="chart-container pie-chart">
+                <canvas id="bar_chart" height="40"></canvas>
+                
+              </div>
+              <table class="table table-striped table-bordered" id="order_table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Codigo</th>
+                        <th>Valor total de fecha</th>
+                        <th>Fecha de registro</th>
+                       
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        
             </div>
 
-                    
-                            <div class="card-body">
-                              <table class="table table-striped table-bordered" id="order_table">
-                                <thead>
-                                    <tr>
-                                        <th width="33%">Nombre</th>
-                                        <th width="33%">Valores Sumados</th>
-                                        <th width="33%">Fecha Concidiente</th>
-                                        
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                             <?php include(app_path().'\includes\action.php');?>
-                             {{-- <section class="content container-fluid" id="bar_chart"> --}}
-                            </div>
-            
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-              {{ csrf_field() }}
-             </div>
-            </div>
+
            
         <br>
           <!-- Modal Editar-->
@@ -223,8 +204,9 @@
       <script src="..\resources\js\daterangepicker\daterangepicker.js"></script>
       <script src="..\resources\js\daterangepicker\moment.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js" integrity="sha512-ElRFoEQdI5Ht6kZvyzXhYG9NqjtkmlkfYk0wr6wHxU9JEHakS7UJZNeml5ALk+8IKlU6jDgMabC3vkumRokgJA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-      
+<script>
+ 
+</script>
       <script>
       $(document).ready(function(){
         var tablaData = $('#tabla-data').DataTable({
@@ -340,7 +322,7 @@
             $('#txtId2').val(prueba[0].id)
             $('#combo3').val(prueba[0].nombreIndicador)
             $('#combo4').val(prueba[0].codigoIndicador)
-           // $('#checkU2').val(prueba[0].unidadMedidaIndicador)
+            $('#checkU2').val(prueba[0].unidadMedidaIndicador)
            if(prueba[0].unidadMedidaIndicador == "Pesos"){
             $('input[name =checkU2][value="Pesos"]').prop('checked', true);
            }
@@ -400,127 +382,185 @@
         });
       });   
        </script>
-    <script>
+  <!--  para usar el buscador <script>
+      var codigo3 = [];
+      var nombre3 = [];
+      var fecha3 = [];
+      var valor3 = [];
         $(document).ready(function(){
-          var date = new Date();
-          $('.input-daterange').datepicker({
-          
-          todayBtn: 'linked',
-          format: 'yyyy-mm-dd',
-          autoclose: true,
-        });
-        var _token = $('input[name="_token"]').val();
-        buscar();
 
- function buscar(from_date = '', to_date = '')
- {
+var date = new Date();
+
+$('.input-daterange').datepicker({
+ todayBtn: 'linked',
+ format: 'yyyy-mm-dd',
+ autoclose: true
+});
+
+var _token = $('input[name="_token"]').val();
+
+fetch_data();
+
+function fetch_data(from_date = '', to_date = '')
+{
  $.ajax({
-   url:"{{ route('prueba.buscar') }}",
-   method:"POST",
-   data:{from_date:from_date, to_date:to_date, _token:_token},
-   dataType:"json",
-   
-})
+  url:"agragaruna llave{ route('prueba.buscar') }}",
+  method:"POST",
+  data:{from_date:from_date, to_date:to_date, _token:_token},
+  dataType:"json",
+  success:function(data)
+  {
+   var output = '';
+   $('#total_records').text(data.length);
+   for(var count = 0; count < data.length; count++)
+   {
+    output += '<tr>';
+    output += '<td>' + data[count].nombreIndicador + '</td>';
+    output += '<td>' + data[count].codigoIndicador + '</td>';
+    output += '<td>' + data[count].valorIndicador + '</td>';
+    output += '<td>' + data[count].fechaIndicador + '</td></tr>';
+    codigo3.push(data[count].codigoIndicador);
+    nombre3.push(data[count].nombreIndicador);
+   fecha3.push(data[count].fechaIndicador);
+   valor3.push(data[count].valorIndicador);
+  
+  }
+  generarchart();
+   $('tbody').html(output);
+
+  }
+  
+ })
+}
+
+$('.input-daterange').change(function(){
+ var from_date = $('#from_date').val();
+ var to_date = $('#to_date').val();
+ if(from_date != '' &&  to_date != '')
+ {
+  fetch_data(from_date, to_date);
  }
- $('#filter').click(function(){
-  var from_date = $('#from_date').val();
-  var to_date = $('#to_date').val();
-  if(from_date != '' &&  to_date != '')
-  {
-   buscar(from_date, to_date);
-  }
-  else
-  {
-   alert('required');
-  }
- });
+ else
+ {
+  alert('Requerido');
+ }
+});
 
- $('#refresh').click(function(){
-  $('#from_date').val('');
-  $('#to_date').val('');
-  buscar();
- });
-
+$('#refresh').click(function(){
+ $('#from_date').val('');
+ $('#to_date').val('');
+ fetch_data();
+});
 
 });
+
+function generarchart(){
+  const ctx = document.getElementById('myChart');
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: fecha3, nombre3,
+      datasets: [{
+        label: "D",
+        data: valor3, codigo3,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+}
+
+
         
-       </script> 
+       </script> -->
        <script>
-    fetch_data();
 
-    var sale_chart;
-
-    function fetch_data()
-    {
-        var dataTable = $('#order_table').DataTable({
-            "processing" : true,
-            "serverSide" : true,
-            "order" : [],
-            "ajax" : {
-                url:"../app/includes/action.php",
-                type:"POST",
-                data:{action:'fetch'}
-            },
-            "drawCallback" : function(settings)
+        $(document).ready(function(){
+        
+            fetch_data();
+        
+            var sale_chart;
+        
+            function fetch_data(start_date = '', end_date = '')
             {
-                var sales_date = [];
-                var sale = [];
-
-                for(var count = 0; count < settings.aoData.length; count++)
-                {
-                    sales_date.push(settings.aoData[count]._aData['2']);
-                    sale.push(parseFloat(settings.aoData[count]._aData['1']));
-                }
-
-                var chart_data = {
-                    labels:sales_date,
-                    datasets:[
+                var dataTable = $('#order_table').DataTable({
+                    "processing" : true,
+                    "serverSide" : true,
+                    language: {
+            url: 'https://cdn.datatables.net/plug-ins/1.12.1/i18n/es-MX.json'
+        },
+                    "order" : [],
+                    "ajax" : {
+                        url:"../app/includes/action.php",
+                        type:"POST",
+                        data:{action:'fetch', start_date:start_date, end_date:end_date}
+                    },
+                    "drawCallback" : function(settings)
+                    {
+                        var sales_date = [];
+                        var sale = [];
+        
+                        for(var count = 0; count < settings.aoData.length; count++)
                         {
-                            label : 'Valor en fecha',
-                            backgroundColor : 'rgba(153, 102, 255)',
-                            color : '#fff',
-                            data:sale
+                            sales_date.push(settings.aoData[count]._aData[3]);
+                            sale.push(parseFloat(settings.aoData[count]._aData[2]));
                         }
-                    ]   
-                };
-
-                var group_chart3 = $('#bar_chart');
-
-                if(sale_chart)
-                {
-                    sale_chart.destroy();
-                }
-
-                sale_chart = new Chart(group_chart3, {
-                    type:'bar',
-                    data:chart_data
+        
+                        var chart_data = {
+                            labels:sales_date,
+                            datasets:[
+                                {
+                                    label : 'Valores en Fecha',
+                                    backgroundColor : 'rgb(255, 205, 86)',
+                                    color : '#fff',
+                                    data:sale
+                                }
+                            ]   
+                        };
+        
+                        var group_chart3 = $('#bar_chart');
+        
+                        if(sale_chart)
+                        {
+                            sale_chart.destroy();
+                        }
+        
+                        sale_chart = new Chart(group_chart3, {
+                            type:'bar',
+                            data:chart_data
+                        });
+                    }
                 });
             }
+
+            $('#daterange_textbox').daterangepicker({
+                ranges:{
+                    'Hoy' : [moment(), moment()],
+                    'Ayer' : [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Anterior semana' : [moment().subtract(6, 'days'), moment()],
+                    'Anterior mes' : [moment().subtract(29, 'days'), moment()],
+                    'Mes' : [moment().startOf('month'), moment().endOf('month')],
+                },
+                format : 'YYYY-MM-DD',
+                showCustomRangeLabel:false,
+                alwaysShowCalendars: true,
+            }, function(start, end){
+        
+                $('#order_table').DataTable().destroy();
+        
+                fetch_data(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'));
+        
+            });
+        
         });
-    }
-    $('#daterange_textbox').daterangepicker({
-        ranges:{
-            'Today' : [moment(), moment()],
-            'Yesterday' : [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            'Last 7 Days' : [moment().subtract(6, 'days'), moment()],
-            'Last 30 Days' : [moment().subtract(29, 'days'), moment()],
-            'This Month' : [moment().startOf('month'), moment().endOf('month')],
-            'Last Month' : [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-        },
-        format : 'YYYY-MM-DD'
-    }, function(start, end){
-
-        $('#order_table').DataTable().destroy();
-
-        fetch_data(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'));
-         $('#refresh').click(function(){
-  $('#from_date').val('');
-  $('#to_date').val('');
-  buscar();
- });
-
-    });
-
-
-       </script>
+        
+        </script>
+      
 </html>

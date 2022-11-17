@@ -1,4 +1,5 @@
 
+
 <?php
 
 //action.php
@@ -9,20 +10,26 @@ if(isset($_POST["action"]))
 {
 	if($_POST["action"] == 'fetch')
 	{
-		$order_column = array('nombreIndicador', 'valorIndicador', 'fechaIndicador');
+		$order_column = array('nombreIndicador', 'valorIndicador', 'fechaIndicador', 'codigoIndicador');
 
 		$main_query = "
-		SELECT nombreIndicador, SUM(valorIndicador) AS valorIndicador, fechaIndicador
-		FROM pruebas 
+		SELECT nombreIndicador, codigoIndicador, SUM(valorIndicador) AS valorIndicador, fechaIndicador 
+		FROM pruebas
 		";
 
 		$search_query = 'WHERE fechaIndicador <= "'.date('Y-m-d').'" AND ';
 
+		if(isset($_POST["start_date"], $_POST["end_date"]) && $_POST["start_date"] != '' && $_POST["end_date"] != '')
+		{
+			$search_query .= 'fechaIndicador >= "'.$_POST["start_date"].'" AND fechaIndicador <= "'.$_POST["end_date"].'" AND ';
+		}
 
 		if(isset($_POST["search"]["value"]))
 		{
-			$search_query .= '(nombreIndicador LIKE "%'.$_POST["search"]["value"].'%" OR valorIndicador LIKE "%'.$_POST["search"]["value"].'%" OR fechaIndicador LIKE "%'.$_POST["search"]["value"].'%")';
+			$search_query .= '(nombreIndicador and codigoIndicador LIKE "%'.$_POST["search"]["value"].'%" OR valorIndicador LIKE "%'.$_POST["search"]["value"].'%" OR fechaIndicador LIKE "%'.$_POST["search"]["value"].'%")';
 		}
+
+
 
 		$group_by_query = " GROUP BY fechaIndicador ";
 
@@ -66,9 +73,14 @@ if(isset($_POST["action"]))
 
 			$sub_array[] = $row['nombreIndicador'];
 
+			$sub_array[] = $row['codigoIndicador'];
+
 			$sub_array[] = $row['valorIndicador'];
 
 			$sub_array[] = $row['fechaIndicador'];
+
+			
+			
 
 			$data[] = $sub_array;
 		}
